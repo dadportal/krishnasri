@@ -6,6 +6,7 @@
 
 @layer base {
   :root {
+    /* Core backgrounds */
     --background: 222 47% 6%;
     --foreground: 210 40% 98%;
 
@@ -15,7 +16,8 @@
     --popover: 222 47% 8%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 190 100% 50%;
+    /* Brand colors */
+    --primary: 160 100% 50%;
     --primary-foreground: 222 47% 6%;
 
     --secondary: 222 30% 14%;
@@ -24,7 +26,7 @@
     --muted: 222 30% 12%;
     --muted-foreground: 215 20% 55%;
 
-    --accent: 270 70% 60%;
+    --accent: 210 100% 60%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 72% 51%;
@@ -38,30 +40,79 @@
 
     --border: 222 30% 16%;
     --input: 222 30% 14%;
-    --ring: 190 100% 50%;
+    --ring: 160 100% 50%;
 
     --radius: 0.75rem;
 
+    /* Sidebar */
     --sidebar-background: 222 47% 7%;
     --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 190 100% 50%;
+    --sidebar-primary: 160 100% 50%;
     --sidebar-primary-foreground: 222 47% 6%;
     --sidebar-accent: 222 30% 12%;
     --sidebar-accent-foreground: 210 40% 90%;
     --sidebar-border: 222 30% 14%;
-    --sidebar-ring: 190 100% 50%;
+    --sidebar-ring: 160 100% 50%;
+
+    /* Role colors */
+    --role-admin: 270 70% 60%;
+    --role-developer: 210 100% 60%;
+    --role-editor: 38 92% 50%;
+    --role-viewer: 160 84% 39%;
 
     /* Custom gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(190 100% 50%) 0%, hsl(210 100% 60%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(270 70% 60%) 0%, hsl(300 70% 50%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(160 100% 50%) 0%, hsl(210 100% 60%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(210 100% 60%) 0%, hsl(270 70% 60%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(140 70% 50%) 100%);
     --gradient-card: linear-gradient(135deg, hsl(222 47% 10%) 0%, hsl(222 47% 8%) 100%);
-    --gradient-glow: radial-gradient(ellipse at center, hsl(190 100% 50% / 0.15) 0%, transparent 70%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(160 100% 50% / 0.15) 0%, transparent 70%);
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(210 100% 60% / 0.3) 0px, transparent 50%),
+                     radial-gradient(at 80% 0%, hsl(270 70% 60% / 0.2) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(160 100% 50% / 0.2) 0px, transparent 50%),
+                     radial-gradient(at 80% 50%, hsl(38 92% 50% / 0.15) 0px, transparent 50%),
+                     radial-gradient(at 0% 100%, hsl(210 100% 60% / 0.2) 0px, transparent 50%);
 
     /* Shadows */
-    --shadow-glow: 0 0 60px -15px hsl(190 100% 50% / 0.4);
+    --shadow-glow: 0 0 60px -15px hsl(160 100% 50% / 0.4);
     --shadow-card: 0 4px 24px -8px hsl(0 0% 0% / 0.5);
     --shadow-elevated: 0 20px 40px -15px hsl(0 0% 0% / 0.6);
+    
+    /* Motion */
+    --ease-smooth: cubic-bezier(0.2, 0, 0, 1);
+    --duration-fast: 200ms;
+    --duration-normal: 300ms;
+    --duration-slow: 500ms;
+  }
+
+  .light {
+    --background: 220 20% 97%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 160 100% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 210 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 160 100% 40%;
+
+    --shadow-glow: 0 0 60px -15px hsl(160 100% 50% / 0.25);
+    --shadow-card: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08);
+    --shadow-elevated: 0 10px 40px -10px rgba(0,0,0,0.15);
   }
 
   .dark {
@@ -101,11 +152,17 @@
   }
 
   .glass {
-    @apply backdrop-blur-xl bg-card/60 border border-border/50;
+    @apply backdrop-blur-xl border border-border/50;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
   }
 
   .glass-subtle {
     @apply backdrop-blur-md bg-card/40 border border-border/30;
+  }
+
+  .glass-surface {
+    @apply backdrop-blur-2xl;
+    background: linear-gradient(180deg, hsl(var(--card) / 0.8), hsl(var(--card) / 0.6));
   }
 
   .glow {
@@ -113,7 +170,11 @@
   }
 
   .glow-accent {
-    box-shadow: 0 0 60px -15px hsl(270 70% 60% / 0.4);
+    box-shadow: 0 0 60px -15px hsl(210 100% 60% / 0.4);
+  }
+
+  .mesh-gradient {
+    background: var(--gradient-mesh);
   }
 
   .animate-float {
@@ -129,13 +190,43 @@
     background-size: 200% 100%;
   }
 
+  .animate-gradient {
+    animation: gradient-shift 8s ease-in-out infinite;
+    background-size: 400% 400%;
+  }
+
+  .animate-orbit {
+    animation: orbit 20s linear infinite;
+  }
+
+  .animate-orbit-reverse {
+    animation: orbit 25s linear infinite reverse;
+  }
+
   .card-hover {
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-300;
+    transition-timing-function: var(--ease-smooth);
   }
 
   .card-hover:hover {
     @apply -translate-y-1;
     box-shadow: var(--shadow-elevated);
+  }
+
+  .hover-lift {
+    @apply transition-transform duration-200;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .hover-glow {
+    @apply transition-shadow duration-300;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 40px -10px hsl(var(--primary) / 0.5);
   }
 }
 
@@ -154,6 +245,56 @@
   }
   100% {
     background-position: 200% 0;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(150px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(150px) rotate(-360deg);
+  }
+}
+
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(20px, -30px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  75% {
+    transform: translate(30px, 10px) scale(1.05);
+  }
+}
+
+@keyframes particle-float {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50px) rotate(360deg);
+    opacity: 0;
   }
 }
 
@@ -178,4 +319,10 @@
 /* Selection */
 ::selection {
   @apply bg-primary/30 text-foreground;
+}
+
+/* Copyright watermark */
+.copyright-watermark::after {
+  content: '© Krishna Sri | guideitsol.com';
+  @apply fixed bottom-2 right-4 text-xs text-muted-foreground/50;
 }
