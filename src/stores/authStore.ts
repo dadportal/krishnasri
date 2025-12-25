@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { supabase } from '@/integrations/supabase/client';
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 export type UserRole = 'admin' | 'developer' | 'editor' | 'viewer';
 
@@ -12,25 +13,24 @@ export interface User {
   createdAt: string;
 }
 
-export interface AuthSession {
-  token: string;
-  refreshToken: string;
-  expiresAt: number;
-}
-
 interface AuthState {
   user: User | null;
-  session: AuthSession | null;
+  supabaseUser: SupabaseUser | null;
+  session: Session | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitialized: boolean;
   
   // Actions
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
-  refreshSession: () => Promise<boolean>;
+  initialize: () => Promise<void>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signup: (email: string, password: string, name: string, role?: UserRole) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
   hasPermission: (requiredRole: UserRole | UserRole[]) => boolean;
+  fetchUserRole: (userId: string) => Promise<UserRole>;
+  updateUserRole: (userId: string, role: UserRole) => Promise<boolean>;
 }
 
 // Role hierarchy for permission checks
@@ -41,144 +41,255 @@ const roleHierarchy: Record<UserRole, number> = {
   viewer: 1,
 };
 
-// Mock users database
-const mockUsers: Record<string, { password: string; user: User }> = {
-  'admin@company.com': {
-    password: 'admin123',
-    user: {
-      id: 'usr_1',
-      email: 'admin@company.com',
-      name: 'Jane Mitchell',
-      role: 'admin',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
-      createdAt: '2024-01-15T10:00:00Z',
-    },
-  },
-  'developer@company.com': {
-    password: 'dev123',
-    user: {
-      id: 'usr_2',
-      email: 'developer@company.com',
-      name: 'Alex Chen',
-      role: 'developer',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex',
-      createdAt: '2024-02-20T14:30:00Z',
-    },
-  },
-  'editor@company.com': {
-    password: 'edit123',
-    user: {
-      id: 'usr_3',
-      email: 'editor@company.com',
-      name: 'Sarah Kim',
-      role: 'editor',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
-      createdAt: '2024-03-10T09:15:00Z',
-    },
-  },
-  'viewer@company.com': {
-    password: 'view123',
-    user: {
-      id: 'usr_4',
-      email: 'viewer@company.com',
-      name: 'Mike Johnson',
-      role: 'viewer',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
-      createdAt: '2024-04-05T11:45:00Z',
-    },
-  },
-};
+export const useAuthStore = create<AuthState>()((set, get) => ({
+  user: null,
+  supabaseUser: null,
+  session: null,
+  isAuthenticated: false,
+  isLoading: false,
+  isInitialized: false,
 
-const generateToken = () => {
-  return 'tok_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-};
+  initialize: async () => {
+    try {
+      set({ isLoading: true });
+      
+      // Get current session
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Error getting session:', error);
+        set({ isInitialized: true, isLoading: false });
+        return;
+      }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      session: null,
-      isAuthenticated: false,
-      isLoading: false,
+      if (session?.user) {
+        // Fetch user role from database
+        const role = await get().fetchUserRole(session.user.id);
+        
+        // Fetch profile data
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        
+        const user: User = {
+          id: session.user.id,
+          email: session.user.email || '',
+          name: profile?.full_name || session.user.email?.split('@')[0] || 'User',
+          role,
+          avatar: profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.email}`,
+          createdAt: profile?.created_at || session.user.created_at,
+        };
 
-      login: async (email: string, password: string) => {
-        set({ isLoading: true });
+        set({
+          user,
+          supabaseUser: session.user,
+          session,
+          isAuthenticated: true,
+        });
+      }
+
+      set({ isInitialized: true, isLoading: false });
+
+      // Listen for auth changes
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('Auth state change:', event);
         
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        const mockUser = mockUsers[email.toLowerCase()];
-        
-        if (mockUser && mockUser.password === password) {
-          const session: AuthSession = {
-            token: generateToken(),
-            refreshToken: generateToken(),
-            expiresAt: Date.now() + 3600000, // 1 hour
-          };
+        if (event === 'SIGNED_IN' && session?.user) {
+          const role = await get().fetchUserRole(session.user.id);
           
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          const user: User = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: profile?.full_name || session.user.email?.split('@')[0] || 'User',
+            role,
+            avatar: profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.email}`,
+            createdAt: profile?.created_at || session.user.created_at,
+          };
+
           set({
-            user: mockUser.user,
+            user,
+            supabaseUser: session.user,
             session,
             isAuthenticated: true,
-            isLoading: false,
           });
-          
-          return true;
+        } else if (event === 'SIGNED_OUT') {
+          set({
+            user: null,
+            supabaseUser: null,
+            session: null,
+            isAuthenticated: false,
+          });
         }
-        
-        set({ isLoading: false });
-        return false;
-      },
-
-      logout: () => {
-        set({
-          user: null,
-          session: null,
-          isAuthenticated: false,
-        });
-      },
-
-      refreshSession: async () => {
-        const { session } = get();
-        if (!session) return false;
-        
-        // Simulate token refresh
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        const newSession: AuthSession = {
-          token: generateToken(),
-          refreshToken: session.refreshToken,
-          expiresAt: Date.now() + 3600000,
-        };
-        
-        set({ session: newSession });
-        return true;
-      },
-
-      setUser: (user) => set({ user, isAuthenticated: !!user }),
-      setLoading: (isLoading) => set({ isLoading }),
-
-      hasPermission: (requiredRole) => {
-        const { user } = get();
-        if (!user) return false;
-        
-        const userLevel = roleHierarchy[user.role];
-        
-        if (Array.isArray(requiredRole)) {
-          return requiredRole.some(role => userLevel >= roleHierarchy[role]);
-        }
-        
-        return userLevel >= roleHierarchy[requiredRole];
-      },
-    }),
-    {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        user: state.user,
-        session: state.session,
-        isAuthenticated: state.isAuthenticated,
-      }),
+      });
+    } catch (error) {
+      console.error('Auth initialization error:', error);
+      set({ isInitialized: true, isLoading: false });
     }
-  )
-);
+  },
+
+  login: async (email: string, password: string) => {
+    set({ isLoading: true });
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        set({ isLoading: false });
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        const role = await get().fetchUserRole(data.user.id);
+        
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+
+        const user: User = {
+          id: data.user.id,
+          email: data.user.email || '',
+          name: profile?.full_name || data.user.email?.split('@')[0] || 'User',
+          role,
+          avatar: profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.user.email}`,
+          createdAt: profile?.created_at || data.user.created_at,
+        };
+
+        set({
+          user,
+          supabaseUser: data.user,
+          session: data.session,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+
+        return { success: true };
+      }
+
+      set({ isLoading: false });
+      return { success: false, error: 'Unknown error occurred' };
+    } catch (error) {
+      set({ isLoading: false });
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  },
+
+  signup: async (email: string, password: string, name: string, role: UserRole = 'viewer') => {
+    set({ isLoading: true });
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
+      });
+
+      if (error) {
+        set({ isLoading: false });
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        // The trigger will create the profile and assign default role
+        // If admin is creating a user with a specific role, update it
+        if (role !== 'viewer') {
+          await get().updateUserRole(data.user.id, role);
+        }
+
+        set({ isLoading: false });
+        return { success: true };
+      }
+
+      set({ isLoading: false });
+      return { success: false, error: 'Unknown error occurred' };
+    } catch (error) {
+      set({ isLoading: false });
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  },
+
+  logout: async () => {
+    set({ isLoading: true });
+    
+    try {
+      await supabase.auth.signOut();
+      set({
+        user: null,
+        supabaseUser: null,
+        session: null,
+        isAuthenticated: false,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      set({ isLoading: false });
+    }
+  },
+
+  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setLoading: (isLoading) => set({ isLoading }),
+
+  hasPermission: (requiredRole) => {
+    const { user } = get();
+    if (!user) return false;
+    
+    const userLevel = roleHierarchy[user.role];
+    
+    if (Array.isArray(requiredRole)) {
+      return requiredRole.some(role => userLevel >= roleHierarchy[role]);
+    }
+    
+    return userLevel >= roleHierarchy[requiredRole];
+  },
+
+  fetchUserRole: async (userId: string): Promise<UserRole> => {
+    try {
+      const { data, error } = await supabase.rpc('get_user_role', { _user_id: userId });
+      
+      if (error) {
+        console.error('Error fetching user role:', error);
+        return 'viewer';
+      }
+      
+      return (data as UserRole) || 'viewer';
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      return 'viewer';
+    }
+  },
+
+  updateUserRole: async (userId: string, role: UserRole): Promise<boolean> => {
+    try {
+      const { error } = await supabase
+        .from('user_roles')
+        .update({ role })
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error('Error updating user role:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      return false;
+    }
+  },
+}));

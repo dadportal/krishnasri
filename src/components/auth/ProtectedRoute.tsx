@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore, UserRole } from '@/stores/authStore';
 import { motion } from 'framer-motion';
-import { Shield, Lock } from 'lucide-react';
+import { Shield, Lock, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ProtectedRouteProps {
@@ -16,8 +16,30 @@ export function ProtectedRoute({
   requiredRoles,
   fallback 
 }: ProtectedRouteProps) {
-  const { isAuthenticated, user, hasPermission } = useAuthStore();
+  const { isAuthenticated, user, hasPermission, isInitialized, initialize, isLoading } = useAuthStore();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!isInitialized) {
+      initialize();
+    }
+  }, [isInitialized, initialize]);
+
+  // Show loading while initializing
+  if (!isInitialized || isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <p className="text-muted-foreground text-sm">Verifying access...</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   // Not authenticated - redirect to login
   if (!isAuthenticated || !user) {
