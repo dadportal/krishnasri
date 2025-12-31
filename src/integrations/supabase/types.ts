@@ -14,6 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
+      candidates: {
+        Row: {
+          created_at: string
+          education: string | null
+          email: string | null
+          experience: string | null
+          id: string
+          linkedin: string | null
+          location: string | null
+          match_score: number | null
+          name: string
+          notes: string | null
+          phone: string | null
+          resume_parsed: Json | null
+          resume_url: string | null
+          role: string | null
+          skills: string[] | null
+          status: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          education?: string | null
+          email?: string | null
+          experience?: string | null
+          id?: string
+          linkedin?: string | null
+          location?: string | null
+          match_score?: number | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          resume_parsed?: Json | null
+          resume_url?: string | null
+          role?: string | null
+          skills?: string[] | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          education?: string | null
+          email?: string | null
+          experience?: string | null
+          id?: string
+          linkedin?: string | null
+          location?: string | null
+          match_score?: number | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          resume_parsed?: Json | null
+          resume_url?: string | null
+          role?: string | null
+          skills?: string[] | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      jobs: {
+        Row: {
+          applicants_count: number | null
+          closes_at: string | null
+          created_at: string
+          created_by: string | null
+          department: string | null
+          description: string | null
+          id: string
+          location: string | null
+          posted_at: string
+          requirements: string[] | null
+          salary_max: number | null
+          salary_min: number | null
+          status: string | null
+          title: string
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          applicants_count?: number | null
+          closes_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          posted_at?: string
+          requirements?: string[] | null
+          salary_max?: number | null
+          salary_min?: number | null
+          status?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          applicants_count?: number | null
+          closes_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          posted_at?: string
+          requirements?: string[] | null
+          salary_max?: number | null
+          salary_min?: number | null
+          status?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -40,6 +160,69 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      resumes: {
+        Row: {
+          candidate_id: string | null
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          job_id: string | null
+          match_score: number | null
+          mime_type: string | null
+          parsed_data: Json | null
+          status: string | null
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          candidate_id?: string | null
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          job_id?: string | null
+          match_score?: number | null
+          mime_type?: string | null
+          parsed_data?: Json | null
+          status?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          candidate_id?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          job_id?: string | null
+          match_score?: number | null
+          mime_type?: string | null
+          parsed_data?: Json | null
+          status?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resumes_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resumes_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
