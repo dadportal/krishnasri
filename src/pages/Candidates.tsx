@@ -1,83 +1,38 @@
 import { motion } from "framer-motion";
-import { Users, Search, Filter, Plus } from "lucide-react";
+import { Users, Search, Filter, Plus, Loader2 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { CandidateCard, Candidate } from "@/components/dashboard/CandidateCard";
+import { CandidateCard } from "@/components/dashboard/CandidateCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-
-const mockCandidates: Candidate[] = [
-  {
-    id: "1",
-    name: "Sarah Chen",
-    role: "Senior ML Engineer",
-    location: "San Francisco, CA",
-    experience: "7 years",
-    education: "M.S. Computer Science",
-    matchScore: 94,
-    skills: ["Python", "TensorFlow", "PyTorch", "AWS", "Kubernetes"],
-    status: "shortlisted",
-  },
-  {
-    id: "2",
-    name: "Marcus Johnson",
-    role: "Full Stack Developer",
-    location: "New York, NY",
-    experience: "5 years",
-    education: "B.S. Software Engineering",
-    matchScore: 87,
-    skills: ["React", "Node.js", "TypeScript", "PostgreSQL"],
-    status: "new",
-  },
-  {
-    id: "3",
-    name: "Emily Rodriguez",
-    role: "Data Scientist",
-    location: "Austin, TX",
-    experience: "4 years",
-    education: "Ph.D. Statistics",
-    matchScore: 82,
-    skills: ["Python", "R", "SQL", "Machine Learning"],
-    status: "interviewed",
-  },
-  {
-    id: "4",
-    name: "David Kim",
-    role: "DevOps Engineer",
-    location: "Seattle, WA",
-    experience: "6 years",
-    education: "B.S. Computer Science",
-    matchScore: 76,
-    skills: ["Docker", "Kubernetes", "Terraform", "AWS"],
-    status: "new",
-  },
-  {
-    id: "5",
-    name: "Lisa Thompson",
-    role: "Product Manager",
-    location: "Boston, MA",
-    experience: "8 years",
-    education: "MBA",
-    matchScore: 71,
-    skills: ["Agile", "Jira", "Roadmapping", "Analytics"],
-    status: "new",
-  },
-  {
-    id: "6",
-    name: "Alex Rivera",
-    role: "Backend Developer",
-    location: "Chicago, IL",
-    experience: "3 years",
-    education: "B.S. Computer Science",
-    matchScore: 68,
-    skills: ["Go", "PostgreSQL", "Redis", "Docker"],
-    status: "rejected",
-  },
-];
+import { useCandidates } from "@/hooks/useCandidates";
+import { AddCandidateDialog } from "@/components/dialogs/AddCandidateDialog";
 
 export default function Candidates() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { candidates, isLoading } = useCandidates();
+
+  const filteredCandidates = candidates.filter(c => 
+    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.role?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.skills?.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  // Map DB format to component format
+  const mappedCandidates = filteredCandidates.map(c => ({
+    id: c.id,
+    name: c.name,
+    role: c.role || 'Unknown',
+    location: c.location || 'Unknown',
+    experience: c.experience || 'N/A',
+    education: c.education || 'N/A',
+    matchScore: c.match_score,
+    skills: c.skills || [],
+    status: c.status,
+  }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,7 +54,7 @@ export default function Candidates() {
                 <div>
                   <h1 className="font-display text-3xl font-bold mb-1">Candidates</h1>
                   <p className="text-muted-foreground">
-                    Manage and review all candidate applications
+                    {candidates.length} candidates in database
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -107,28 +62,50 @@ export default function Candidates() {
                     <Filter className="w-4 h-4" />
                     Filters
                   </Button>
-                  <Button className="gap-2">
+                  <Button className="gap-2" onClick={() => setShowAddDialog(true)}>
                     <Plus className="w-4 h-4" />
                     Add Candidate
                   </Button>
                 </div>
               </div>
 
-              {/* Search bar */}
               <div className="relative max-w-md mb-6">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder="Search candidates by name, skill, or role..." className="pl-10" />
+                <Input 
+                  placeholder="Search candidates by name, skill, or role..." 
+                  className="pl-10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {mockCandidates.map((candidate, index) => (
-                <CandidateCard key={candidate.id} candidate={candidate} index={index} />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : mappedCandidates.length === 0 ? (
+              <div className="text-center py-12 glass rounded-xl">
+                <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="font-display text-lg font-semibold mb-2">No candidates found</h3>
+                <p className="text-muted-foreground mb-4">Add your first candidate to get started</p>
+                <Button onClick={() => setShowAddDialog(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Candidate
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {mappedCandidates.map((candidate, index) => (
+                  <CandidateCard key={candidate.id} candidate={candidate} index={index} />
+                ))}
+              </div>
+            )}
           </main>
         </div>
       </div>
+
+      <AddCandidateDialog open={showAddDialog} onOpenChange={setShowAddDialog} />
     </div>
   );
 }
