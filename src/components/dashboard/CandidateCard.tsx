@@ -11,7 +11,7 @@ export interface Candidate {
   education: string;
   matchScore: number;
   skills: string[];
-  status: "new" | "shortlisted" | "interviewed" | "rejected";
+  status: "new" | "shortlisted" | "interviewed" | "rejected" | "hired";
   avatar?: string;
 }
 
@@ -26,6 +26,7 @@ const statusColors = {
   shortlisted: "bg-success/20 text-success border-success/30",
   interviewed: "bg-warning/20 text-warning border-warning/30",
   rejected: "bg-destructive/20 text-destructive border-destructive/30",
+  hired: "bg-accent/20 text-accent border-accent/30",
 };
 
 export function CandidateCard({ candidate, index, onClick }: CandidateCardProps) {
