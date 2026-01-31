@@ -14,6 +14,344 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_time: string
+          id: string
+          lead_id: string | null
+          location: string | null
+          meeting_link: string | null
+          start_time: string
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_time: string
+          id?: string
+          lead_id?: string | null
+          location?: string | null
+          meeting_link?: string | null
+          start_time: string
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          id?: string
+          lead_id?: string | null
+          location?: string | null
+          meeting_link?: string | null
+          start_time?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          content: string
+          created_at: string
+          excerpt: string | null
+          featured_image: string | null
+          id: string
+          published_at: string | null
+          slug: string
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          views: number | null
+        }
+        Insert: {
+          author_id?: string | null
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          published_at?: string | null
+          slug: string
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          views?: number | null
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          published_at?: string | null
+          slug?: string
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
+      candidates: {
+        Row: {
+          created_at: string
+          education: string | null
+          email: string | null
+          experience: string | null
+          id: string
+          linkedin: string | null
+          location: string | null
+          match_score: number | null
+          name: string
+          notes: string | null
+          phone: string | null
+          resume_parsed: Json | null
+          resume_url: string | null
+          role: string | null
+          skills: string[] | null
+          status: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          education?: string | null
+          email?: string | null
+          experience?: string | null
+          id?: string
+          linkedin?: string | null
+          location?: string | null
+          match_score?: number | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          resume_parsed?: Json | null
+          resume_url?: string | null
+          role?: string | null
+          skills?: string[] | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          education?: string | null
+          email?: string | null
+          experience?: string | null
+          id?: string
+          linkedin?: string | null
+          location?: string | null
+          match_score?: number | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          resume_parsed?: Json | null
+          resume_url?: string | null
+          role?: string | null
+          skills?: string[] | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      content_generations: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          prompt: string
+          result: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          prompt: string
+          result?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          prompt?: string
+          result?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      jobs: {
+        Row: {
+          applicants_count: number | null
+          closes_at: string | null
+          created_at: string
+          created_by: string | null
+          department: string | null
+          description: string | null
+          id: string
+          location: string | null
+          posted_at: string
+          requirements: string[] | null
+          salary_max: number | null
+          salary_min: number | null
+          status: string | null
+          title: string
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          applicants_count?: number | null
+          closes_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          posted_at?: string
+          requirements?: string[] | null
+          salary_max?: number | null
+          salary_min?: number | null
+          status?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          applicants_count?: number | null
+          closes_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          posted_at?: string
+          requirements?: string[] | null
+          salary_max?: number | null
+          salary_min?: number | null
+          status?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          metadata: Json | null
+          name: string
+          phone: string | null
+          score: number | null
+          source: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          name: string
+          phone?: string | null
+          score?: number | null
+          source?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          name?: string
+          phone?: string | null
+          score?: number | null
+          source?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string | null
+          id: string
+          metadata: Json | null
+          payment_method: string | null
+          status: string | null
+          transaction_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method?: string | null
+          status?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method?: string | null
+          status?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -38,6 +376,105 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      resumes: {
+        Row: {
+          candidate_id: string | null
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          job_id: string | null
+          match_score: number | null
+          mime_type: string | null
+          parsed_data: Json | null
+          status: string | null
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          candidate_id?: string | null
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          job_id?: string | null
+          match_score?: number | null
+          mime_type?: string | null
+          parsed_data?: Json | null
+          status?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          candidate_id?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          job_id?: string | null
+          match_score?: number | null
+          mime_type?: string | null
+          parsed_data?: Json | null
+          status?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resumes_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resumes_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimonials: {
+        Row: {
+          avatar: string | null
+          company: string | null
+          content: string
+          created_at: string
+          featured: boolean | null
+          id: string
+          name: string
+          rating: number | null
+          role: string | null
+        }
+        Insert: {
+          avatar?: string | null
+          company?: string | null
+          content: string
+          created_at?: string
+          featured?: boolean | null
+          id?: string
+          name: string
+          rating?: number | null
+          role?: string | null
+        }
+        Update: {
+          avatar?: string | null
+          company?: string | null
+          content?: string
+          created_at?: string
+          featured?: boolean | null
+          id?: string
+          name?: string
+          rating?: number | null
+          role?: string | null
         }
         Relationships: []
       }
