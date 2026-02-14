@@ -44,10 +44,10 @@ export function Header({ onMenuClick }: HeaderProps) {
           </Button>
           
           <div className="hidden sm:flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <span className="font-display font-bold text-sm text-primary-foreground">RS</span>
-            </div>
-            <span className="font-display font-bold text-lg hidden md:block">ResumeScreen</span>
+            <img src="/logo.png" alt="GuideSoft" className="w-8 h-8 object-contain" />
+            <span className="font-display font-bold text-lg hidden md:block">
+              <span className="text-primary">Guide</span><span>Soft</span>
+            </span>
           </div>
         </div>
 

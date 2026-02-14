@@ -22,9 +22,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-            <span className="font-display font-bold text-2xl text-primary-foreground">RS</span>
-          </div>
+          <img src="/logo.png" alt="GuideSoft" className="w-16 h-16 object-contain" />
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
           <p className="text-muted-foreground text-sm">Loading...</p>
         </motion.div>
