@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import logoImg from "@/assets/guidesoft-logo.png";
 
 interface LogoProps {
   showText?: boolean;
@@ -21,7 +20,7 @@ export function Logo({ showText = true, size = "md", className = "" }: LogoProps
       transition={{ duration: 0.2 }}
     >
       <img 
-        src={logoImg} 
+        src="/logo.png" 
         alt="GuideSoft" 
         className={`${sizes[size].img} object-contain`}
       />

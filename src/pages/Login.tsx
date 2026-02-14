@@ -76,7 +76,7 @@ export default function Login() {
     if (result.success) {
       toast({
         title: 'Account created!',
-        description: 'Welcome to ResumeAI. You are now signed in.',
+        description: 'Welcome to GuideSoft. You are now signed in.',
       });
       navigate(from, { replace: true });
     } else {
@@ -100,15 +100,15 @@ export default function Login() {
           {/* Logo */}
           <div className="mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-4">
-              <Sparkles className="w-5 h-5 text-primary" />
-              <span className="font-display font-bold gradient-text">ResumeAI</span>
+              <img src="/logo.png" alt="GuideSoft" className="w-6 h-6 object-contain" />
+              <span className="font-display font-bold gradient-text">GuideSoft</span>
             </div>
             <h1 className="font-display text-4xl font-bold mb-2">
               {isSignup ? 'Create Account' : 'Welcome Back'}
             </h1>
             <p className="text-muted-foreground">
               {isSignup 
-                ? 'Join the AI-powered recruitment platform' 
+                ? 'Join the AI-powered marketing & branding studio' 
                 : 'Sign in to access your dashboard'}
             </p>
           </div>

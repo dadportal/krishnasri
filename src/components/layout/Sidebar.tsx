@@ -19,11 +19,12 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: Users, label: "Candidates", path: "/candidates" },
   { icon: Briefcase, label: "Jobs", path: "/jobs" },
   { icon: FileText, label: "Resumes", path: "/resumes" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
+  { icon: Sparkles, label: "AI Tools", path: "/ai-tools" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
@@ -57,12 +58,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {/* Logo */}
           <div className="flex items-center justify-between mb-8 px-2">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <img src="/logo.png" alt="GuideSoft" className="w-10 h-10 object-contain" />
               <div>
-                <h1 className="font-display font-bold text-lg">ResumeScreen</h1>
-                <p className="text-xs text-muted-foreground">AI-Powered Hiring</p>
+                <h1 className="font-display font-bold text-lg"><span className="text-primary">Guide</span>Soft</h1>
+                <p className="text-xs text-muted-foreground">AI-Powered Studio</p>
               </div>
             </div>
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={onClose}>

@@ -2,6 +2,12 @@
 
 ## ✅ COMPLETED TASKS
 
+### Build & Branding
+- [x] Fixed missing guidesoft-logo.png build error (uses public/logo.png)
+- [x] Rebranded Header, Sidebar, Login, AuthProvider to GuideSoft
+- [x] Updated Sidebar nav paths to match App.tsx routes
+- [x] Jobs page connected to real database via useJobs hook
+
 ### Landing & Marketing Pages
 - [x] Landing page with 8 sections (Hero, Features, Services, Testimonials, Pricing, About, Contact, Footer)
 - [x] About page with team and values
@@ -32,6 +38,8 @@
 - [x] Content generations table for AI tools
 - [x] Blog posts table
 - [x] Testimonials table
+- [x] Jobs CRUD with useJobs hook
+- [x] Candidates CRUD with useCandidates hook
 
 ### AI Content Tools
 - [x] AI Content Studio page
@@ -66,17 +74,15 @@
 - [x] generate-architecture - AI architecture lab
 - [x] parse-resume - Resume parsing
 
-## 🔄 IN PROGRESS / PENDING
+## 🔄 PENDING / FUTURE
 
 ### Integrations
 - [ ] Google Sheets export (requires OAuth setup)
 - [ ] Google Docs integration (requires OAuth setup)
 - [ ] WhatsApp Business API webhook
-- [ ] Google Analytics (add tracking code to index.html)
+- [ ] Google Analytics (add tracking code)
 
 ### Additional Pages
-- [ ] Profile settings page
-- [ ] User management admin page
 - [ ] Privacy Policy page
 - [ ] Terms of Service page
 
@@ -84,18 +90,11 @@
 - [x] Meta tags in index.html
 - [x] Open Graph tags
 - [ ] sitemap.xml generation
-- [ ] robots.txt (exists but may need updates)
 - [ ] Schema markup for products
 
 ### PWA Support
 - [ ] manifest.json
 - [ ] Service worker
-- [ ] Offline functionality
-
-### Performance
-- [ ] Lighthouse audit and optimization
-- [ ] Image lazy loading (partially implemented)
-- [ ] Code splitting (Vite handles this)
 
 ## 📋 NOTES
 
@@ -107,7 +106,7 @@
 ### Tech Stack
 - Frontend: React + Vite + TypeScript + Tailwind
 - UI: shadcn/ui components
-- Backend: Supabase (Lovable Cloud)
+- Backend: Lovable Cloud
 - AI: Lovable AI Gateway (Gemini)
 - Animations: Framer Motion
 
