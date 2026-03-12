@@ -113,7 +113,7 @@ const generateTrafficHistory = (): TrafficData[] => {
   return history;
 };
 
-let simulationInterval: NodeJS.Timeout | null = null;
+let simulationInterval: ReturnType<typeof setInterval> | null = null;
 
 export const useSystemStore = create<SystemState>()(
   persist(

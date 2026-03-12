@@ -3,14 +3,15 @@ import { motion } from "framer-motion";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { UpiQrCode } from "@/components/payment/UpiQrCode";
 import { 
   CreditCard, 
   Shield, 
   Check, 
   Sparkles,
-  Loader2
+  Loader2,
+  QrCode
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -128,20 +129,28 @@ export default function Payment() {
               <h2 className="font-display text-xl font-bold mb-6">Payment Method</h2>
               
               <div className="space-y-4">
-                {/* UPI Payment */}
+                {/* UPI Payment with QR */}
                 <motion.div
                   whileHover={{ scale: 1.01 }}
-                  className="p-4 bg-secondary/30 rounded-xl border-2 border-primary"
+                  className="p-6 bg-secondary/30 rounded-xl border-2 border-primary"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-primary" />
+                      <QrCode className="w-6 h-6 text-primary" />
                     </div>
                     <div>
                       <div className="font-medium">GuideSoft Pay (UPI)</div>
-                      <div className="text-sm text-muted-foreground">Pay securely with any UPI app</div>
+                      <div className="text-sm text-muted-foreground">Scan QR code with any UPI app</div>
                     </div>
                   </div>
+                  
+                  <UpiQrCode
+                    upiId="8884162999-4@ybl"
+                    amount={(plans.find((p) => p.id === selectedPlan)?.price || 0) * 83}
+                    name="GuideSoft"
+                    note={`GuideSoft ${plans.find((p) => p.id === selectedPlan)?.name} Plan`}
+                    size={220}
+                  />
                 </motion.div>
 
                 {/* Card Payment (Coming Soon) */}
