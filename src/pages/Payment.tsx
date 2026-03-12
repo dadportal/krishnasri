@@ -3,14 +3,15 @@ import { motion } from "framer-motion";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { UpiQrCode } from "@/components/payment/UpiQrCode";
 import { 
   CreditCard, 
   Shield, 
   Check, 
   Sparkles,
-  Loader2
+  Loader2,
+  QrCode
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
