@@ -8,7 +8,8 @@ import {
   Linkedin, 
   Youtube,
   Share2,
-  Heart
+  Heart,
+  ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,10 +126,7 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.product.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link to={link.href} className="text-muted-foreground hover:text-foreground transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -142,10 +140,7 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link to={link.href} className="text-muted-foreground hover:text-foreground transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -159,10 +154,7 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link to={link.href} className="text-muted-foreground hover:text-foreground transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -176,10 +168,7 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link to={link.href} className="text-muted-foreground hover:text-foreground transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -196,7 +185,15 @@ export function Footer() {
             © {new Date().getFullYear()} GuideSoft. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="w-4 h-4 text-destructive fill-destructive" /> by GuideSoft Team
+            Designed & Developed by{" "}
+            <a
+              href="https://www.guideitsol.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline font-medium inline-flex items-center gap-1"
+            >
+              GUIDESOFT <ExternalLink className="w-3 h-3" />
+            </a>
           </p>
         </div>
       </div>
